@@ -1,27 +1,9 @@
 import { useMemo } from "react";
+import { people } from "@/app/utils/constants";
 
 type SlideCardProps = {
   variant: "chat" | "people";
 };
-
-const people = [
-  { initials: "AM", name: "Ana Martins", area: "Front-end", color: "bg-[#ef7dba]" },
-  { initials: "JO", name: "João Lima", area: "Back-end", color: "bg-[#7851cf]" },
-  { initials: "CA", name: "Caio Alves", area: "Dados", color: "bg-[#42a5a5]" },
-  { initials: "LI", name: "Lívia Rocha", area: "UX/UI Design", color: "bg-[#e69251]" },
-  { initials: "BR", name: "Bruna Costa", area: "Mobile", color: "bg-[#d15ca9]" },
-  { initials: "RA", name: "Rafael Nunes", area: "DevOps", color: "bg-[#4e8aca]" },
-  { initials: "MA", name: "Marina Souza", area: "QA", color: "bg-[#7b9c51]" },
-  { initials: "GU", name: "Gustavo Melo", area: "Cibersegurança", color: "bg-[#c2665d]" },
-  { initials: "BE", name: "Beatriz Freitas", area: "Product Management", color: "bg-[#9a67d6]" },
-  { initials: "VI", name: "Victor Hugo", area: "Cloud", color: "bg-[#367d91]" },
-  { initials: "IS", name: "Isabela Ramos", area: "Inteligência Artificial", color: "bg-[#bd7e43]" },
-  { initials: "LE", name: "Leonardo Reis", area: "Blockchain", color: "bg-[#5763b6]" },
-  { initials: "PA", name: "Paula Mendes", area: "Developer Relations", color: "bg-[#b65887]" },
-  { initials: "FE", name: "Felipe Barros", area: "Game Development", color: "bg-[#4b9b80]" },
-  { initials: "TA", name: "Tainá Oliveira", area: "Acessibilidade", color: "bg-[#aa704b]" },
-  { initials: "DI", name: "Diego Moreira", area: "Software Architecture", color: "bg-[#7268a7]" },
-];
 
 export default function SlideCard({ variant }: SlideCardProps) {
   const selectedPeople = useMemo(
