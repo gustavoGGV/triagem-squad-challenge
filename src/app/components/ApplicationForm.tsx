@@ -333,7 +333,7 @@ export default function ApplicationForm() {
       <Header dark={dark} onToggleTheme={() => setDark((value) => !value)} />
       <section id="inicio" className="mx-auto max-w-[1280px] px-5 pb-12 pt-12 sm:px-8">
         <div className="text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-violet-500">Candidatura</p>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-violet-500">Formulário de triagem</p>
           <h1 className="mt-2 text-3xl font-bold text-[var(--ink)]">{titles[current]}</h1>
           <div className="mt-5 flex justify-center gap-2" aria-label="Progresso das etapas">{stages.map((stage, index) => <span key={stage} title={stage} className={`h-2.5 rounded-full transition-all duration-300 ${valid(index) ? "w-9 bg-violet-600 animate-[progress-pop_300ms_ease-out]" : "w-2.5 bg-violet-300"}`} />)}</div>
         </div>

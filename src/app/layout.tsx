@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "He4rt Developers | Comunidade",
-  description: "Uma comunidade para aprender e criar tecnologia junto.",
+  title: "Triagem - He4rt Developers",
+  description: "Desafio de UI.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
