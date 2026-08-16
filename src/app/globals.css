@@ -16,13 +16,65 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: clip;
 }
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
-@keyframes slide-card-in {
-  from { opacity: 0; transform: translateX(12px); }
+@keyframes form-slide-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes progress-pop {
+  50% { transform: scale(1.18); }
+}
+
+@keyframes drawer-in {
+  from { opacity: 0; transform: translateX(100%); }
   to { opacity: 1; transform: translateX(0); }
+}
+
+/* Mantém os cards do formulário no mesmo contorno do header no tema escuro. */
+main[class*="bg-[#100b1c]"] .border-white\/60 {
+  border-color: #2d2d31;
+}
+
+main::after {
+  content: "Desafio de UI | Squads He4rt";
+  display: block;
+  padding: 2rem 1.25rem;
+  color: #786f91;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Ações da tela de confirmação ficam empilhadas para leitura e toque mais fáceis. */
+main:has(#success-title) .sm\:flex-row {
+  flex-direction: column;
+}
+
+main:has(#success-title) pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+  main:has(#success-title) .text-2xl {
+    font-size: 1.25rem;
+    line-height: 1.35;
+  }
+
+  main:has(#success-title) pre {
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+
+  main:has(#success-title) .sm\:flex-row > * {
+    width: 100%;
+  }
 }
