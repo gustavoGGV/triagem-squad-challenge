@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 import Header from "@/app/components/Header";
 
 const areas = ["Backend", "DevOps", "Frontend", "Data", "UI/UX", "QA", "Mobile", "Integrações", "Gamificação", "Conteúdo"];
@@ -59,6 +59,13 @@ export default function ApplicationForm() {
   const [promote, setPromote] = useState(false);
   const [challenge, setChallenge] = useState(false);
   const surfaceStyle = { "--surface": dark ? "#20182e" : "#ffffff", "--ink": dark ? "#f7f2ff" : "#211b3d", "--muted": dark ? "#bcb3cf" : "#786f91", "--line": dark ? "#42364e" : "#ebe8f3", "--soft": dark ? "#2a2038" : "#f7f5fb" } as CSSProperties;
+
+  useEffect(() => {
+    const firstError = Object.keys(errors)[0];
+    if (!firstError) return;
+
+    requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-field="${firstError}"]`)?.focus());
+  }, [errors]);
   
   const toggleSelection = (
     value: string,
@@ -119,6 +126,17 @@ export default function ApplicationForm() {
   };
 
   const submit = () => setSubmitted(true);
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (current === stages.length - 1) {
+      submit();
+      return;
+    }
+
+    next();
+  };
+
   const reset = () => {
     setSubmitted(false);
     setCurrent(0);
@@ -145,11 +163,11 @@ export default function ApplicationForm() {
       <p className="mt-1 text-sm text-[var(--muted)]">Conte pra gente onde você se sente mais à vontade.</p>
       <div className="mt-7 grid gap-4 sm:grid-cols-2">
         <label className="font-bold text-[var(--ink)]">Seu nome <span className="text-pink-500">*</span>
-          <input value={name} onChange={(e) => setName(e.target.value)} className="mt-2 w-full rounded-xl border border-[var(--line)] bg-[var(--soft)] px-4 py-3 font-normal text-[var(--ink)] outline-none focus:border-violet-500" placeholder="Como quer ser chamado?" />
+          <input data-field="name" aria-invalid={Boolean(errors.name)} value={name} onChange={(e) => setName(e.target.value)} className="mt-2 w-full rounded-xl border border-[var(--line)] bg-[var(--soft)] px-4 py-3 font-normal text-[var(--ink)] outline-none focus:border-violet-500" placeholder="Como quer ser chamado?" />
           <FieldError message={errors.name} />
         </label>
         <label className="font-bold text-[var(--ink)]">Usuário do Discord <span className="text-pink-500">*</span>
-          <input value={discord} onChange={(e) => setDiscord(e.target.value)} className="mt-2 w-full rounded-xl border border-[var(--line)] bg-[var(--soft)] px-4 py-3 font-normal text-[var(--ink)] outline-none focus:border-violet-500" placeholder="@seuusuario" />
+          <input data-field="discord" aria-invalid={Boolean(errors.discord)} value={discord} onChange={(e) => setDiscord(e.target.value)} className="mt-2 w-full rounded-xl border border-[var(--line)] bg-[var(--soft)] px-4 py-3 font-normal text-[var(--ink)] outline-none focus:border-violet-500" placeholder="@seuusuario" />
           <FieldError message={errors.discord} />
         </label>
       </div>
@@ -194,7 +212,7 @@ export default function ApplicationForm() {
       <legend className="text-lg font-bold text-[var(--ink)]">É o que o capitão lê primeiro. Capricha.</legend>
       <label className="mt-7 block font-bold text-[var(--ink)]">Por que esse squad? <span className="text-pink-500">*</span>
         <span className="mt-1 block text-sm font-normal text-[var(--muted)]">Mínimo de 10 caracteres.</span>
-        <textarea value={motivation} onChange={(e) => setMotivation(e.target.value)} className="mt-3 min-h-36 w-full resize-y rounded-xl border border-[var(--line)] bg-[var(--soft)] p-4 font-normal text-[var(--ink)] outline-none focus:border-violet-500" />
+        <textarea data-field="motivation" aria-invalid={Boolean(errors.motivation)} value={motivation} onChange={(e) => setMotivation(e.target.value)} className="mt-3 min-h-36 w-full resize-y rounded-xl border border-[var(--line)] bg-[var(--soft)] p-4 font-normal text-[var(--ink)] outline-none focus:border-violet-500" />
         <span className="mt-1 block text-right text-xs text-[var(--muted)]">{motivation.length} caracteres</span>
         <FieldError message={errors.motivation} />
       </label>
@@ -320,13 +338,13 @@ export default function ApplicationForm() {
           <div className="mt-5 flex justify-center gap-2" aria-label="Progresso das etapas">{stages.map((stage, index) => <span key={stage} title={stage} className={`h-2.5 rounded-full transition-all duration-300 ${valid(index) ? "w-9 bg-violet-600 animate-[progress-pop_300ms_ease-out]" : "w-2.5 bg-violet-300"}`} />)}</div>
         </div>
         <div className="mt-10 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_330px]">
-          <div className="rounded-[32px] border border-white/60 bg-[var(--surface)] p-6 shadow-[0_16px_40px_rgba(47,29,91,0.1)] sm:p-8">
+          <form onSubmit={handleSubmit} className="rounded-[32px] border border-white/60 bg-[var(--surface)] p-6 shadow-[0_16px_40px_rgba(47,29,91,0.1)] sm:p-8">
             <p className="text-sm font-bold uppercase tracking-wider text-violet-500">Etapa {current + 1} de {stages.length}</p>
             <h2 className="mt-1 text-2xl font-bold text-[var(--ink)]">{stages[current]}</h2>
             <div key={current} className="mt-7 animate-[form-slide-in_250ms_ease-out]">{slides[current]}</div>
             <div className="mt-8 flex justify-between border-t border-[var(--line)] pt-5">
-              <button type="button" disabled={current === 0} onClick={() => { setErrors({}); setCurrent((value) => value - 1); }} className="rounded-xl border border-[var(--line)] px-5 py-3 font-bold text-[var(--muted)] transition hover:border-violet-400 disabled:invisible">‹ Voltar</button>{current < stages.length - 1 ? <button type="button" onClick={next} className="rounded-xl bg-violet-600 px-6 py-3 font-bold text-white transition hover:scale-[1.02] hover:bg-violet-700">Continuar →</button> : <button type="button" onClick={submit} className="rounded-xl bg-violet-600 px-6 py-3 font-bold text-white transition hover:scale-[1.02] hover:bg-violet-700">Enviar candidatura</button>}</div>
-          </div>
+              <button type="button" disabled={current === 0} onClick={() => { setErrors({}); setCurrent((value) => value - 1); }} className="rounded-xl border border-[var(--line)] px-5 py-3 font-bold text-[var(--muted)] transition hover:border-violet-400 disabled:invisible">‹ Voltar</button>{current < stages.length - 1 ? <button type="submit" className="rounded-xl bg-violet-600 px-6 py-3 font-bold text-white transition hover:scale-[1.02] hover:bg-violet-700">Continuar →</button> : <button type="submit" className="rounded-xl bg-violet-600 px-6 py-3 font-bold text-white transition hover:scale-[1.02] hover:bg-violet-700">Enviar candidatura</button>}</div>
+          </form>
           <aside className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-violet-600 via-violet-700 to-fuchsia-700 p-1 shadow-[0_16px_40px_rgba(91,43,185,0.35)]">
             <div className="absolute left-1/2 top-0 h-5 w-20 -translate-x-1/2 rounded-b-2xl bg-[var(--surface)]" />
             <div className="rounded-[28px] border border-white/25 bg-white/10 p-6 pt-10 text-white backdrop-blur-sm">

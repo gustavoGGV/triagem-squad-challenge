@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import He4rtLogo from "@/app/assets/he4rt-logo.svg";
 import He4rtLogoPurple from "@/app/assets/he4rt-logo-purple.svg";
 
@@ -37,7 +37,34 @@ function DiscordIcon() {
 
 export default function Header({ dark = true, onToggleTheme }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const drawerRef = useRef<HTMLElement>(null);
   const controlClass = dark ? "border-[#333338] text-[#f6f6f7] hover:bg-[#202024]" : "border-[#e7e3f0] text-[#554b70] hover:bg-[#f4f1fa]";
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const drawer = drawerRef.current;
+    const focusable = drawer?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])");
+    const first = focusable?.[0];
+    const last = focusable?.[focusable.length - 1];
+    first?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key !== "Tab" || !first || !last) return;
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [menuOpen]);
 
   return (
     <header className="relative z-30 px-3 py-2 sm:px-6">
@@ -71,7 +98,7 @@ export default function Header({ dark = true, onToggleTheme }: HeaderProps) {
       </div>
       {menuOpen && <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-labelledby="menu-title">
         <button type="button" aria-label="Fechar menu" onClick={() => setMenuOpen(false)} className="absolute inset-0 bg-black/75 backdrop-blur-sm" />
-        <nav className={`absolute bottom-0 right-0 top-0 flex w-full max-w-[min(92vw,560px)] flex-col overflow-y-auto rounded-l-[42px] border-l p-7 pb-10 shadow-2xl animate-[drawer-in_250ms_ease-out] sm:rounded-l-[56px] sm:p-12 ${dark ? "border-[#2d2d31] bg-[#121214] text-white" : "border-[#e7e3f0] bg-[#fcfbff] text-[#211b3d]"}`} aria-label="Menu do usuário">
+        <nav ref={drawerRef} className={`absolute bottom-0 right-0 top-0 flex w-full max-w-[min(92vw,560px)] flex-col overflow-y-auto rounded-l-[42px] border-l p-7 pb-10 shadow-2xl animate-[drawer-in_250ms_ease-out] sm:rounded-l-[56px] sm:p-12 ${dark ? "border-[#2d2d31] bg-[#121214] text-white" : "border-[#e7e3f0] bg-[#fcfbff] text-[#211b3d]"}`} aria-label="Menu do usuário">
           <div className="flex items-center justify-between border-b border-current/15 pb-7">
             <h2 id="menu-title" className="text-3xl font-bold">Menu</h2>
             <button type="button" onClick={() => setMenuOpen(false)} aria-label="Fechar menu" className={`grid h-14 w-14 place-items-center rounded-full border text-4xl font-light transition ${controlClass}`}>×</button>
